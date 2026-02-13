@@ -27,12 +27,19 @@ contract TransparentTender {
     // ======================================================
 
     struct Contractor {
+        uint256 contractorId;
         bool registered;
+        string companyName;
         string ipfsProfileHash;
         uint256 competenceScore;
     }
 
+
     mapping(address => Contractor) public contractors;
+    uint256 public contractorCount = 0;
+    address[] public contractorList;
+    mapping(uint256 => address) public contractorIdToAddress;
+
 
     // 1. We define the "Event" here (The notification system)
 event ContractorApproved(address indexed contractor, uint256 score);
@@ -47,9 +54,15 @@ function approveContractor(
     require(!contractors[_contractor].registered, "Already registered");
     require(_aiGeneratedScore <= 100, "Score out of bounds");
 
+    contractorCount++;
+    contractorList.push(_contractor);
+    contractorIdToAddress[contractorCount] = _contractor;
+
     // The data is only written to the chain NOW
     contractors[_contractor] = Contractor({
+        contractorId: contractorCount,
         registered: true,
+        companyName: "",
         ipfsProfileHash: _ipfsHash,
         competenceScore: _aiGeneratedScore
     });
@@ -75,6 +88,7 @@ function approveContractor(
     uint256 public tenderCount = 0;
     mapping(uint256 => Tender) public tenders;
     mapping(uint256 => address[]) public tenderBidders;
+    uint256[] public tenderIds;
 
     event TenderCreated(uint256 tenderId, string ipfsHash, uint256 commitDeadline, uint256 revealDeadline);
 
@@ -88,6 +102,8 @@ function approveContractor(
         require(_revealDeadline > _commitDeadline, "Reveal must be after commit");
 
         tenderCount++;
+        tenderIds.push(tenderCount);
+
         tenders[tenderCount] = Tender({
             tenderId: tenderCount,
             ipfsTenderHash: _ipfsHash,
@@ -222,4 +238,66 @@ function approveContractor(
     function getMilestones(uint256 tenderId) external view returns (Milestone[] memory) {
         return milestones[tenderId];
     }
+
+    // ======================================================
+    // 7. PUBLIC READ FUNCTIONS
+    // ======================================================
+
+    function getTenderIds() external view returns (uint256[] memory) {
+        return tenderIds;
+    }
+
+    // Returns the full list of contractor addresses
+    function getContractorList() external view returns (address[] memory) {
+        return contractorList;
+    }
+
+    // Returns full details of a single contractor
+    function getContractorDetails(address _addr) external view returns (
+        uint256 contractorId,
+        bool registered,
+        string memory companyName,
+        string memory ipfsProfileHash,
+        uint256 competenceScore
+    ) {
+        Contractor storage c = contractors[_addr];
+        return (c.contractorId, c.registered, c.companyName, c.ipfsProfileHash, c.competenceScore);
+    }
+
+    // Returns all tenders in one call (avoids multiple RPC requests from frontend)
+    function getAllTenders() external view returns (Tender[] memory) {
+        Tender[] memory allTenders = new Tender[](tenderCount);
+        for (uint256 i = 0; i < tenderCount; i++) {
+            allTenders[i] = tenders[i + 1]; // tenderIds are 1-indexed
+        }
+        return allTenders;
+    }
+
+    // Returns all bidder addresses for a specific tender
+    function getTenderBidders(uint256 tenderId) external view returns (address[] memory) {
+        return tenderBidders[tenderId];
+    }
+
+    // Returns the winner details for a specific tender
+    function getTenderWinner(uint256 tenderId) external view returns (
+        address winnerAddress,
+        string memory companyName,
+        string memory ipfsProfileHash,
+        uint256 competenceScore,
+        uint256 winningBidAmount,
+        bool winnerSelected
+    ) {
+        Tender storage t = tenders[tenderId];
+        winnerSelected = t.winnerSelected;
+        winnerAddress = t.winner;
+        winningBidAmount = t.winningBidAmount;
+
+        if (t.winnerSelected) {
+            Contractor storage c = contractors[t.winner];
+            companyName = c.companyName;
+            ipfsProfileHash = c.ipfsProfileHash;
+            competenceScore = c.competenceScore;
+        }
+    }
+
 }
