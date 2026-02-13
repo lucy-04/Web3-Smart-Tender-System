@@ -4,19 +4,26 @@ pragma solidity ^0.8.20;
 contract TransparentTender {
 
     mapping(address => bool) public governmentOfficials;
+    address public owner;
 
     modifier onlyGov() {
         require(governmentOfficials[msg.sender], "Not a government official");
         _;
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the contract owner can do this");
+        _;
+    }
+
     constructor() {
+        owner = msg.sender;
         governmentOfficials[msg.sender] = true; 
     }
 
     receive() external payable {}
 
-    function addGovernmentOfficial(address newOfficial) external onlyGov {
+    function addGovernmentOfficial(address newOfficial) external onlyOwner {
         governmentOfficials[newOfficial] = true;
     }
     struct Contractor {
@@ -41,6 +48,7 @@ function approveContractor(
     string memory _ipfsHash, 
     uint256 _aiGeneratedScore
 ) external onlyGov {
+    require(!governmentOfficials[_contractor], "Government official cannot be a contractor");
     require(!contractors[_contractor].registered, "Already registered");
     require(_aiGeneratedScore <= 100, "Score out of bounds");
 
