@@ -79,6 +79,11 @@
 				"internalType": "string",
 				"name": "desc",
 				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_paymentAmount",
+				"type": "uint256"
 			}
 		],
 		"name": "addMilestone",
@@ -329,6 +334,16 @@
 						"internalType": "bool",
 						"name": "approved",
 						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "paymentAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "paid",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct TransparentTender.Milestone[]",
@@ -386,6 +401,16 @@
 			{
 				"internalType": "bool",
 				"name": "approved",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "paymentAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "paid",
 				"type": "bool"
 			}
 		],
@@ -744,5 +769,102 @@
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTenderProgress",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "totalMilestones",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "submittedCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "approvedCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "statuses",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "fundTender",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "tenderFunds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "milestoneId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "contractor",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "MilestonePayment",
+		"type": "event"
 	}
 ]
