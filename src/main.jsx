@@ -12,17 +12,22 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { config } from './wagmi';
+import { WalletProvider } from './context/WalletContext';
 
 const queryClient = new QueryClient();
 
 import { sepolia } from 'wagmi/chains';
 
 createRoot(document.getElementById('root')).render(
-  <WagmiProvider config={config}>
-    <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider initialChain={sepolia}>
-        <App />
-      </RainbowKitProvider>
-    </QueryClientProvider>
-  </WagmiProvider>
+  <StrictMode>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider initialChain={sepolia}>
+          <WalletProvider>
+            <App />
+          </WalletProvider>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </StrictMode>
 )
