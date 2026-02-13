@@ -18,6 +18,9 @@ contract TransparentTender {
         governmentOfficials[msg.sender] = true; 
     }
 
+    // Allow contract to receive ETH
+    receive() external payable {}
+
     function addGovernmentOfficial(address newOfficial) external onlyGov {
         governmentOfficials[newOfficial] = true;
     }
@@ -206,22 +209,35 @@ function approveContractor(
     }
 
     // ======================================================
-    // 6. MILESTONES
+    // 6. MILESTONES & PAYMENTS
     // ======================================================
 
     struct Milestone {
         string description;
         string ipfsProofHash;
         bool approved;
+        uint256 paymentAmount;
+        bool paid;
     }
 
     mapping(uint256 => Milestone[]) public milestones;
+    mapping(uint256 => uint256) public tenderFunds; // ETH balance per tender
 
-    function addMilestone(uint256 tenderId, string memory desc) external onlyGov {
+    event MilestonePayment(uint256 tenderId, uint256 milestoneId, address contractor, uint256 amount);
+
+    // Government deposits ETH for a specific tender
+    function fundTender(uint256 tenderId) external payable onlyGov {
+        require(tenders[tenderId].tenderId != 0, "Tender does not exist");
+        tenderFunds[tenderId] += msg.value;
+    }
+
+    function addMilestone(uint256 tenderId, string memory desc, uint256 _paymentAmount) external onlyGov {
         milestones[tenderId].push(Milestone({
             description: desc,
             ipfsProofHash: "",
-            approved: false
+            approved: false,
+            paymentAmount: _paymentAmount,
+            paid: false
         }));
     }
 
@@ -231,7 +247,24 @@ function approveContractor(
     }
 
     function approveMilestone(uint256 tenderId, uint256 milestoneId) external onlyGov {
-        milestones[tenderId][milestoneId].approved = true;
+        Milestone storage m = milestones[tenderId][milestoneId];
+        require(!m.approved, "Already approved");
+        require(bytes(m.ipfsProofHash).length > 0, "No proof submitted");
+
+        m.approved = true;
+
+        // Auto-transfer payment to contractor
+        if (m.paymentAmount > 0 && !m.paid) {
+            require(tenderFunds[tenderId] >= m.paymentAmount, "Insufficient tender funds");
+            m.paid = true;
+            tenderFunds[tenderId] -= m.paymentAmount;
+
+            address winner = tenders[tenderId].winner;
+            (bool success, ) = payable(winner).call{value: m.paymentAmount}("");
+            require(success, "Payment transfer failed");
+
+            emit MilestonePayment(tenderId, milestoneId, winner, m.paymentAmount);
+        }
     }
 
     // Helper to fetch all milestones for frontend
@@ -297,6 +330,31 @@ function approveContractor(
             companyName = c.companyName;
             ipfsProfileHash = c.ipfsProfileHash;
             competenceScore = c.competenceScore;
+        }
+    }
+
+    // Returns milestone progress summary for a tender
+    // status: 0 = pending, 1 = proof submitted, 2 = approved
+    function getTenderProgress(uint256 tenderId) external view returns (
+        uint256 totalMilestones,
+        uint256 submittedCount,
+        uint256 approvedCount,
+        uint256[] memory statuses
+    ) {
+        Milestone[] storage ms = milestones[tenderId];
+        totalMilestones = ms.length;
+        statuses = new uint256[](totalMilestones);
+
+        for (uint256 i = 0; i < totalMilestones; i++) {
+            if (ms[i].approved) {
+                statuses[i] = 2;
+                approvedCount++;
+                submittedCount++; // approved implies submitted
+            } else if (bytes(ms[i].ipfsProofHash).length > 0) {
+                statuses[i] = 1;
+                submittedCount++;
+            }
+            // else statuses[i] = 0 (default)
         }
     }
 
