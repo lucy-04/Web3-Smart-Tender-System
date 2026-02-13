@@ -191,8 +191,8 @@ const GovernmentLogin = () => {
                                 type="submit"
                                 disabled={!isFormValid || !isConnected}
                                 className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${isFormValid && isConnected
-                                    ? "bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 cursor-pointer"
-                                    : "bg-blue-600/40 text-white/50 cursor-not-allowed"
+                                    ? "bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 hover:scale-[1.02] shadow-[0_0_25px_rgba(0,255,255,0.3)] cursor-pointer"
+                                    : "bg-gray-700/50 text-white/50 cursor-not-allowed"
                                     }`}
                             >
                                 Login
