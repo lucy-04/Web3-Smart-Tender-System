@@ -1,32 +1,40 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
     const location = useLocation();
 
-    const isActive = (path) => {
-        return location.pathname === path ? 'text-white font-bold border-b-2 border-indigo-500' : 'text-gray-400 hover:text-white';
-    };
+    const isHome = location.pathname === "/";
+    const isSignup = location.pathname === "/signup";
+    const isLogin =
+        location.pathname === "/login-government" ||
+        location.pathname === "/login-tender";
 
     return (
-        <nav className="glass-panel mb-8 sticky top-4 z-50">
-            <div className="container mx-auto flex justify-between items-center">
-                <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                    <Link to="/">Web3Tender</Link>
-                </div>
+        <nav className="w-full flex items-center justify-between px-24 py-6 border-b border-white/10 bg-[#0B1220]/90 backdrop-blur-md sticky top-0 z-50">
 
-                <div className="flex gap-6 items-center">
-                    <Link to="/" className={isActive('/')}>Home</Link>
-                    <Link to="/register" className={isActive('/register')}>Register</Link>
-                    <Link to="/admin" className={isActive('/admin')}>Admin</Link>
-                    <Link to="/contractor" className={isActive('/contractor')}>Dashboard</Link>
-                </div>
 
-                <div>
-                    <ConnectButton showBalance={false} />
+            <Link to="/" className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-sm font-bold">
+                    W3
                 </div>
-            </div>
+                <span className="text-2xl font-semibold tracking-wide">
+                    Web3Tender
+                </span>
+            </Link>
+
+
+
+
+
+            {isHome && (
+                <Link
+                    to="/signup"
+                    className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-sm font-semibold transition shadow-md shadow-blue-600/30"
+                >
+                    Sign Up
+                </Link>
+            )}
+
         </nav>
     );
 };
