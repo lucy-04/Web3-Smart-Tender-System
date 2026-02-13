@@ -3,5 +3,88 @@
 @tailwind utilities;
 
 body {
-  background-color: #0B1220;
+  background-color: #050816;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+
+
+@keyframes auroraMove {
+  0% {
+    transform: translateX(-10%) translateY(0%) scale(1);
+  }
+
+  50% {
+    transform: translateX(10%) translateY(-5%) scale(1.05);
+  }
+
+  100% {
+    transform: translateX(-10%) translateY(0%) scale(1);
+  }
+}
+
+@keyframes auroraMoveSlow {
+  0% {
+    transform: translateX(0%) translateY(0%) scale(1);
+  }
+
+  50% {
+    transform: translateX(-5%) translateY(5%) scale(1.08);
+  }
+
+  100% {
+    transform: translateX(0%) translateY(0%) scale(1);
+  }
+}
+
+.animate-aurora {
+  animation: auroraMove 18s ease-in-out infinite;
+}
+
+.animate-aurora-slow {
+  animation: auroraMoveSlow 25s ease-in-out infinite;
+}
+
+@keyframes auroraMove {
+  0% {
+    transform: translateX(-10%) translateY(0%) scale(1);
+  }
+
+  50% {
+    transform: translateX(10%) translateY(-5%) scale(1.05);
+  }
+
+  100% {
+    transform: translateX(-10%) translateY(0%) scale(1);
+  }
+}
+
+@keyframes auroraMoveSlow {
+  0% {
+    transform: translateX(0%) translateY(0%) scale(1);
+  }
+
+  50% {
+    transform: translateX(-5%) translateY(5%) scale(1.08);
+  }
+
+  100% {
+    transform: translateX(0%) translateY(0%) scale(1);
+  }
+}
+
+.animate-aurora {
+  animation: auroraMove 18s ease-in-out infinite;
+}
+
+.animate-aurora-slow {
+  animation: auroraMoveSlow 25s ease-in-out infinite;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 50px 50px;
 }
