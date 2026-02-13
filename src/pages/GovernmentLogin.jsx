@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useConnectModal, ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useReadContract } from "wagmi";
@@ -27,6 +27,13 @@ const GovernmentLogin = () => {
         args: address ? [address] : undefined,
         enabled: !!address,
     });
+
+    // Auto-redirect if wallet is already a verified government official
+    useEffect(() => {
+        if (isConnected && isGovOfficial) {
+            navigate("/admin");
+        }
+    }, [isConnected, isGovOfficial, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -117,7 +124,7 @@ const GovernmentLogin = () => {
                             onSubmit={handleSubmit}
                             className={`bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl transition-all duration-300 ${!isConnected ? "opacity-40 pointer-events-none" : ""}`}
                         >
-                           
+
                             <div className="mb-5">
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                                 <input
@@ -128,7 +135,7 @@ const GovernmentLogin = () => {
                                 />
                             </div>
 
-           
+
                             <div className="mb-5">
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Official Email</label>
                                 <input
@@ -139,7 +146,7 @@ const GovernmentLogin = () => {
                                 />
                             </div>
 
-            
+
                             <div className="mb-5">
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Employee ID</label>
                                 <input
@@ -150,7 +157,7 @@ const GovernmentLogin = () => {
                                 />
                             </div>
 
-            
+
                             <div className="mb-5">
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Department</label>
                                 <select
@@ -180,14 +187,14 @@ const GovernmentLogin = () => {
                                 />
                             </div>
 
-      
+
                             {error && (
                                 <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
                                     {error}
                                 </div>
                             )}
 
-                            
+
                             <button
                                 type="submit"
                                 disabled={!isFormValid || !isConnected || loading || isCheckingGov}
