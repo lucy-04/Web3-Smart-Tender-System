@@ -1,61 +1,5 @@
 [
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "ipfsHash",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "commitDeadline",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "revealDeadline",
-				"type": "uint256"
-			}
-		],
-		"name": "TenderCreated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "winner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "finalScore",
-				"type": "uint256"
-			}
-		],
-		"name": "WinnerSelected",
-		"type": "event"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -94,6 +38,29 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_contractor",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_ipfsHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_aiGeneratedScore",
+				"type": "uint256"
+			}
+		],
+		"name": "approveContractor",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "tenderId",
 				"type": "uint256"
@@ -108,6 +75,43 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "fundTender",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "contractor",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "score",
+				"type": "uint256"
+			}
+		],
+		"name": "ContractorApproved",
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -146,17 +150,35 @@
 		"type": "function"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "_ipfsHash",
-				"type": "string"
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "milestoneId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "contractor",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
 			}
 		],
-		"name": "registerContractor",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "MilestonePayment",
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -184,24 +206,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "contractor",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "score",
-				"type": "uint256"
-			}
-		],
-		"name": "setCompetenceScore",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint256",
 				"name": "tenderId",
 				"type": "uint256"
@@ -216,6 +220,37 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "ipfsHash",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "commitDeadline",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "revealDeadline",
+				"type": "uint256"
+			}
+		],
+		"name": "TenderCreated",
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -241,9 +276,33 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "winner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "finalScore",
+				"type": "uint256"
+			}
+		],
+		"name": "WinnerSelected",
+		"type": "event"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	},
 	{
 		"inputs": [
@@ -280,6 +339,57 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "contractorCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "contractorIdToAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "contractorList",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -290,9 +400,19 @@
 		"name": "contractors",
 		"outputs": [
 			{
+				"internalType": "uint256",
+				"name": "contractorId",
+				"type": "uint256"
+			},
+			{
 				"internalType": "bool",
 				"name": "registered",
 				"type": "bool"
+			},
+			{
+				"internalType": "string",
+				"name": "companyName",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -303,6 +423,108 @@
 				"internalType": "uint256",
 				"name": "competenceScore",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getAllTenders",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "tenderId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsTenderHash",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "commitDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "revealDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "winnerSelected",
+						"type": "bool"
+					},
+					{
+						"internalType": "address",
+						"name": "winner",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "winningBidAmount",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct TransparentTender.Tender[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_addr",
+				"type": "address"
+			}
+		],
+		"name": "getContractorDetails",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "contractorId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "registered",
+				"type": "bool"
+			},
+			{
+				"internalType": "string",
+				"name": "companyName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ipfsProfileHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "competenceScore",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getContractorList",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
 			}
 		],
 		"stateMutability": "view",
@@ -349,6 +571,116 @@
 				"internalType": "struct TransparentTender.Milestone[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTenderBidders",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getTenderIds",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTenderProgress",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "totalMilestones",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "submittedCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "approvedCount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "statuses",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTenderWinner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "winnerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "companyName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ipfsProfileHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "competenceScore",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "winningBidAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "winnerSelected",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -462,6 +794,44 @@
 				"type": "uint256"
 			}
 		],
+		"name": "tenderFunds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "tenderIds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"name": "tenders",
 		"outputs": [
 			{
@@ -502,369 +872,5 @@
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getTenderIds",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getContractorList",
-		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_addr",
-				"type": "address"
-			}
-		],
-		"name": "getContractorDetails",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "contractorId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "registered",
-				"type": "bool"
-			},
-			{
-				"internalType": "string",
-				"name": "companyName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "ipfsProfileHash",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "competenceScore",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getAllTenders",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "tenderId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "ipfsTenderHash",
-						"type": "string"
-					},
-					{
-						"internalType": "uint256",
-						"name": "commitDeadline",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "revealDeadline",
-						"type": "uint256"
-					},
-					{
-						"internalType": "bool",
-						"name": "winnerSelected",
-						"type": "bool"
-					},
-					{
-						"internalType": "address",
-						"name": "winner",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "winningBidAmount",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct TransparentTender.Tender[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			}
-		],
-		"name": "getTenderBidders",
-		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "contractorCount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "contractorList",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "contractorIdToAddress",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "contractor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "score",
-				"type": "uint256"
-			}
-		],
-		"name": "ContractorApproved",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "tenderIds",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			}
-		],
-		"name": "getTenderWinner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "winnerAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "companyName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "ipfsProfileHash",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "competenceScore",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "winningBidAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "winnerSelected",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			}
-		],
-		"name": "getTenderProgress",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "totalMilestones",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "submittedCount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "approvedCount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "statuses",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			}
-		],
-		"name": "fundTender",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "tenderFunds",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "tenderId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "milestoneId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "contractor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "MilestonePayment",
-		"type": "event"
 	}
 ]

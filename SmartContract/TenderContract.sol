@@ -3,10 +3,6 @@ pragma solidity ^0.8.20;
 
 contract TransparentTender {
 
-    // ======================================================
-    // 1. ACCESS CONTROL
-    // ======================================================
-
     mapping(address => bool) public governmentOfficials;
 
     modifier onlyGov() {
@@ -18,17 +14,11 @@ contract TransparentTender {
         governmentOfficials[msg.sender] = true; 
     }
 
-    // Allow contract to receive ETH
     receive() external payable {}
 
     function addGovernmentOfficial(address newOfficial) external onlyGov {
         governmentOfficials[newOfficial] = true;
     }
-
-    // ======================================================
-    // 2. CONTRACTOR REGISTRY
-    // ======================================================
-
     struct Contractor {
         uint256 contractorId;
         bool registered;
@@ -44,16 +34,13 @@ contract TransparentTender {
     mapping(uint256 => address) public contractorIdToAddress;
 
 
-    // 1. We define the "Event" here (The notification system)
-event ContractorApproved(address indexed contractor, uint256 score);
+    event ContractorApproved(address indexed contractor, uint256 score);
 
-// This is the function the Government official calls
 function approveContractor(
     address _contractor, 
     string memory _ipfsHash, 
     uint256 _aiGeneratedScore
 ) external onlyGov {
-    // Safety Check: Don't approve someone twice
     require(!contractors[_contractor].registered, "Already registered");
     require(_aiGeneratedScore <= 100, "Score out of bounds");
 
@@ -61,7 +48,6 @@ function approveContractor(
     contractorList.push(_contractor);
     contractorIdToAddress[contractorCount] = _contractor;
 
-    // The data is only written to the chain NOW
     contractors[_contractor] = Contractor({
         contractorId: contractorCount,
         registered: true,
@@ -70,13 +56,9 @@ function approveContractor(
         competenceScore: _aiGeneratedScore
     });
 
-    // 2. Trigger the event so the website knows it's done!
+        
     emit ContractorApproved(_contractor, _aiGeneratedScore);
 }
-
-    // ======================================================
-    // 3. TENDER CREATION
-    // ======================================================
 
     struct Tender {
         uint256 tenderId;
@@ -85,7 +67,7 @@ function approveContractor(
         uint256 revealDeadline;
         bool winnerSelected;
         address winner;
-        uint256 winningBidAmount; // Helpful for frontend display
+        uint256 winningBidAmount;
     }
 
     uint256 public tenderCount = 0;
@@ -120,10 +102,6 @@ function approveContractor(
         emit TenderCreated(tenderCount, _ipfsHash, _commitDeadline, _revealDeadline);
     }
 
-    // ======================================================
-    // 4. COMMIT–REVEAL BIDDING (The Complex Part)
-    // ======================================================
-
     struct Bid {
         bytes32 commitHash;
         uint256 revealedAmount;
@@ -144,7 +122,6 @@ function approveContractor(
         bids[tenderId][msg.sender].commitHash = _commitHash;
     }
 
-    // CHANGED: 'secret' is now bytes32 (salt) instead of string for gas efficiency
     function revealBid(uint256 tenderId, uint256 amount, bytes32 secret) external {
         Tender storage t = tenders[tenderId];
         require(block.timestamp > t.commitDeadline, "Cannot reveal yet");
@@ -157,10 +134,6 @@ function approveContractor(
         bids[tenderId][msg.sender].revealedAmount = amount;
         bids[tenderId][msg.sender].revealed = true;
     }
-
-    // ======================================================
-    // 5. WINNER SELECTION
-    // ======================================================
 
     event WinnerSelected(uint256 tenderId, address winner, uint256 finalScore);
 
@@ -180,18 +153,12 @@ function approveContractor(
             address bidder = bidders[i];
             Bid memory bid = bids[tenderId][bidder];
 
-            // Ignore those who didn't reveal
+
             if (!bid.revealed) continue;
 
             uint256 price = bid.revealedAmount; 
             uint256 competence = contractors[bidder].competenceScore;
 
-            // HACKATHON NOTE:
-            // If you pass Price in WEI (10^18), it will dominate the score.
-            // Ensure your frontend passes price in standard units (e.g. 5000 USD) 
-            // OR change this formula to divide price by 1e18.
-            
-            // Formula: (Price * 70) + ((100 - Competence) * 30)
             uint256 finalScore = (price * 70) + ((100 - competence) * 30);
 
             if (finalScore < bestScore) {
@@ -208,10 +175,6 @@ function approveContractor(
         emit WinnerSelected(tenderId, bestBidder, bestScore);
     }
 
-    // ======================================================
-    // 6. MILESTONES & PAYMENTS
-    // ======================================================
-
     struct Milestone {
         string description;
         string ipfsProofHash;
@@ -221,11 +184,11 @@ function approveContractor(
     }
 
     mapping(uint256 => Milestone[]) public milestones;
-    mapping(uint256 => uint256) public tenderFunds; // ETH balance per tender
+    mapping(uint256 => uint256) public tenderFunds; 
 
     event MilestonePayment(uint256 tenderId, uint256 milestoneId, address contractor, uint256 amount);
 
-    // Government deposits ETH for a specific tender
+
     function fundTender(uint256 tenderId) external payable onlyGov {
         require(tenders[tenderId].tenderId != 0, "Tender does not exist");
         tenderFunds[tenderId] += msg.value;
@@ -253,7 +216,7 @@ function approveContractor(
 
         m.approved = true;
 
-        // Auto-transfer payment to contractor
+        
         if (m.paymentAmount > 0 && !m.paid) {
             require(tenderFunds[tenderId] >= m.paymentAmount, "Insufficient tender funds");
             m.paid = true;
@@ -267,25 +230,19 @@ function approveContractor(
         }
     }
 
-    // Helper to fetch all milestones for frontend
+
     function getMilestones(uint256 tenderId) external view returns (Milestone[] memory) {
         return milestones[tenderId];
     }
-
-    // ======================================================
-    // 7. PUBLIC READ FUNCTIONS
-    // ======================================================
 
     function getTenderIds() external view returns (uint256[] memory) {
         return tenderIds;
     }
 
-    // Returns the full list of contractor addresses
+
     function getContractorList() external view returns (address[] memory) {
         return contractorList;
     }
-
-    // Returns full details of a single contractor
     function getContractorDetails(address _addr) external view returns (
         uint256 contractorId,
         bool registered,
@@ -297,21 +254,20 @@ function approveContractor(
         return (c.contractorId, c.registered, c.companyName, c.ipfsProfileHash, c.competenceScore);
     }
 
-    // Returns all tenders in one call (avoids multiple RPC requests from frontend)
+
     function getAllTenders() external view returns (Tender[] memory) {
         Tender[] memory allTenders = new Tender[](tenderCount);
         for (uint256 i = 0; i < tenderCount; i++) {
-            allTenders[i] = tenders[i + 1]; // tenderIds are 1-indexed
+            allTenders[i] = tenders[i + 1]; 
         }
         return allTenders;
     }
-
-    // Returns all bidder addresses for a specific tender
+    
     function getTenderBidders(uint256 tenderId) external view returns (address[] memory) {
         return tenderBidders[tenderId];
     }
 
-    // Returns the winner details for a specific tender
+
     function getTenderWinner(uint256 tenderId) external view returns (
         address winnerAddress,
         string memory companyName,
@@ -333,8 +289,7 @@ function approveContractor(
         }
     }
 
-    // Returns milestone progress summary for a tender
-    // status: 0 = pending, 1 = proof submitted, 2 = approved
+    
     function getTenderProgress(uint256 tenderId) external view returns (
         uint256 totalMilestones,
         uint256 submittedCount,
@@ -349,12 +304,11 @@ function approveContractor(
             if (ms[i].approved) {
                 statuses[i] = 2;
                 approvedCount++;
-                submittedCount++; // approved implies submitted
+                submittedCount++; 
             } else if (bytes(ms[i].ipfsProofHash).length > 0) {
                 statuses[i] = 1;
                 submittedCount++;
             }
-            // else statuses[i] = 0 (default)
         }
     }
 
