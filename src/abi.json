@@ -700,5 +700,49 @@
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tenderId",
+				"type": "uint256"
+			}
+		],
+		"name": "getTenderWinner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "winnerAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "companyName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ipfsProfileHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "competenceScore",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "winningBidAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "winnerSelected",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	}
 ]
